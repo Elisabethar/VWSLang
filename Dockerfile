@@ -14,7 +14,7 @@ WORKDIR /tmp/cmake-3.5.2
 RUN ./configure \
   && make \
   && make install \
-  && apt-get install -y git \
+  && apt-get install -y git ninja-build vim flex bison ncurses-dev zlib1g-dev \
   && mkdir /root/work
 
 WORKDIR /root/work
@@ -26,7 +26,7 @@ RUN (cd projects/; git clone --depth 1 https://github.com/llvm-mirror/compiler-r
 RUN mkdir /root/work/obj
 
 WORKDIR /root/work/obj
-RUN cmake ../llvm \
+RUN cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ../llvm \
   && cmake --build . \
   && cmake --build . --target install
 
