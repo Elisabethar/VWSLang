@@ -555,8 +555,11 @@ public:
             printIndent(indent);
             printf("Initializer:\n");
             if(initializer)
+            {
                 initializer->print(indent+2);
-            else{
+            }
+            else
+            {
                 printIndent(indent);
                 printf("Empty\n");
             }
@@ -570,17 +573,25 @@ public:
             printIndent(indent);
             printf("Amount:\n");
             if(expr)
+            {
                 expr->print(indent+2);
-            else{
+            }
+            else
+            {
                 printIndent(indent);
                 printf("Empty\n");
             }
             printIndent(indent);
             printf("Initializer:\n");
             if(initializer)
+            {
                 initializer->print(indent+2);
-            printIndent(indent);
+            }
+            else
+            {
+                printIndent(indent);
                 printf("Empty\n");
+            }
         }
         else
         {
@@ -588,15 +599,18 @@ public:
             printf("[FunctionAST[3] || e_Func]:\n");
             printIndent(indent);
             printf("Name: %s\n", Name.c_str());
-            if((Args != NULL) && (Args->size() != 0)) {
+            if((Args != NULL) && (Args->size() != 0))
+            {
                 printIndent(indent);
                 printf("identifier_list: ");
-                for(vector<string>::iterator it = Args->begin(); it != Args->end(); ++it) {
+                for(vector<string>::iterator it = Args->begin(); it != Args->end(); ++it)
+                {
                     printf("%s ", it->c_str());
                 }
                 printf("\n");
             }
-            else if(parameters) {
+            else if(parameters)
+            {
                 printIndent(indent);
                 printf("parameter_list:\n");
                 parameters->print(indent+2);

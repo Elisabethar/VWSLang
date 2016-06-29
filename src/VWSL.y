@@ -99,8 +99,7 @@
 /* special tokens */
 %token <token> STRUCT UNION ENUM ELLIPSIS
 
-%type <block> statement_list
-
+%type <block> statement_list block
 %type <segment> translation_unit
 %type <node> external_declaration class_definition function_definition declaration init_declarator initializer
 %type <decl> declaration_specifiers 
@@ -305,14 +304,14 @@ selection_statement
 iteration_statement
 	: WHILE LPAREN expression RPAREN statement 												{ $$ = new WhileAST($3, $5); }
 	| DO statement WHILE LPAREN expression RPAREN SEMICOLON									{ $$ = new DoWhileAST($5, $2); }
-	| postfix_expression DO OR identifier_list OR block END 								{} // a.each do |b| decls stmts end
+	| postfix_expression DO OR identifier_list OR block END 								{ $$ = new ForAST($4, $1, NULL, $6); } // a.each do |b| decls stmts end
 	| FOR LPAREN expression_statement expression_statement RPAREN statement 				{ $$ = new ForAST($3, $4, NULL, $6); }
 	| FOR LPAREN expression_statement expression_statement expression RPAREN statement 		{ $$ = new ForAST($3, $4, $5, $7); }
 	| FOR LPAREN declaration expression_statement expression RPAREN statement 				{ $$ = new ForAST($3, $4, $5, $7); }
 	;
 
 block																						// ruby-like do-end block
-	: statement_list 																		{}
+	: statement_list 																		{ $$ = $1 }
 	;
 
 jump_statement
@@ -454,10 +453,10 @@ postfix_expression
 	| postfix_expression LBRACKET expression RBRACKET 										{}
 	| postfix_expression LPAREN RPAREN 														{}
 	| postfix_expression LPAREN argument_expression_list RPAREN								{} // test(a, b), when in a function and want to call another one
-	| postfix_expression DOT IDENTIFIER 													{}
+	| postfix_expression DOT IDENTIFIER 													{ $$ = new GetVarAST($1, $3.m_name, GetVarAST::NONE); }
 	| postfix_expression PTR_OP IDENTIFIER 													{}
-	| postfix_expression INC_OP 															{}
-	| postfix_expression DEC_OP 															{}
+	| postfix_expression INC_OP 															{ $$ = new PostfixIncrementAST($1, $2.m_name); }
+	| postfix_expression DEC_OP 															{ $$ = new PostfixIncrementAST($1, $2.m_name); }
 	;
 
 argument_expression_list
