@@ -311,7 +311,7 @@ iteration_statement
 	;
 
 block																						// ruby-like do-end block
-	: statement_list 																		{ $$ = $1 }
+	: statement_list 																		{ $$ = $1; }
 	;
 
 jump_statement

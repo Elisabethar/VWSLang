@@ -154,9 +154,9 @@ public:
 class ParaDeclAST : public NodeAST
 {
 public:
-    class NodeAST* decl;
-    class NodeAST* func;
-    ParaDeclAST(class NodeAST* d, class NodeAST* f)
+    NodeAST* decl = NULL;
+    NodeAST* func = NULL;
+    ParaDeclAST(NodeAST* d, NodeAST* f)
         : decl(d)
         , func(f)
     {
@@ -180,7 +180,7 @@ public:
 class ParaDeclListAST : public NodeAST
 {
 public:
-    vector<class NodeAST*> para_decl_list;
+    vector<NodeAST*> para_decl_list;
     bool ellipsis_exist;
     ParaDeclListAST()
     {
@@ -209,8 +209,8 @@ public:
 class InitDeclAST : public NodeAST
 {
 public:
-    class NodeAST* func;
-    InitDeclAST(class NodeAST* f)
+    NodeAST* func = NULL;
+    InitDeclAST(NodeAST* f)
         : func(f)
     {
         m_type = tInitDeclAST;
@@ -229,7 +229,7 @@ public:
 class InitDeclListAST : public NodeAST
 {
 public:
-    vector<class NodeAST*> decl_inits;
+    vector<NodeAST*> decl_inits;
     InitDeclListAST()
     {
         m_type = tInitDeclListAST;
@@ -238,7 +238,7 @@ public:
     {
         printIndent(indent);
         printf("[InitDeclListAST]\n");
-        vector<class NodeAST*>::iterator it = decl_inits.begin();
+        vector<NodeAST*>::iterator it = decl_inits.begin();
         for(int i = 0; it != decl_inits.end(); ++it, ++i)
         {
             printIndent(indent+2);
@@ -251,15 +251,15 @@ public:
 class InitAST : public NodeAST
 {
 public:
-    class NodeAST* expr;
-    class NodeAST* init_list;
+    NodeAST* expr;
+    NodeAST* init_list;
     enum type
     {
         e_Expr = 1,
         e_List,
         e_List_With_Comma
     }e_Type;
-    InitAST(class NodeAST* e, class NodeAST* i, enum type e_type)
+    InitAST(NodeAST* e, NodeAST* i, enum type e_type)
         : expr(e)
         , init_list(i)
         , e_Type(e_type)
@@ -365,7 +365,7 @@ public:
     virtual void print(int indent)
     {
         printIndent(indent);
-        printf("[Int64AST]: m_val=%llu\n", m_val);
+        printf("[Int64AST]: m_val=%lu\n", m_val);
     }
 };
 
@@ -405,7 +405,7 @@ class DeclarationAST : public NodeAST
 {
 public:
     deque<string*> specifiers;
-    class InitDeclListAST* InitDeclList;
+    class InitDeclListAST* InitDeclList = NULL;
     DeclarationAST()
     {
         m_type = tDeclarationAST;
@@ -432,15 +432,15 @@ public:
 class DefinitionAST : public NodeAST
 {
 public:
-    class NodeAST* decl_spec;
-    class NodeAST* declarator;
-    class NodeAST* block;
+    NodeAST* decl_spec;
+    NodeAST* declarator;
+    NodeAST* block;
     enum type
     {
         e_Class = 1,
         e_Func
     }e_Type;
-    DefinitionAST(class NodeAST* ds, class NodeAST* d, class NodeAST* b, enum type e_type)
+    DefinitionAST(NodeAST* ds, NodeAST* d, NodeAST* b, enum type e_type)
         : decl_spec(ds)
         , declarator(d)
         , block(b)
@@ -534,9 +534,9 @@ public:
         e_Array,
         e_Func
     } e_Type;
-    class NodeAST* expr; 
-    class NodeAST* initializer;
-    class NodeAST* parameters;
+    NodeAST* expr = NULL; 
+    NodeAST* initializer = NULL;
+    NodeAST* parameters = NULL;
 
     FunctionAST(const string &name, enum type e_type)
         : Name(name)
@@ -622,7 +622,7 @@ public:
 class ReturnAST : public NodeAST
 {
 public:
-    NodeAST* m_expr;
+    NodeAST* m_expr = NULL;
     ReturnAST(NodeAST* expr)
         : m_expr(expr)
     {
@@ -1042,7 +1042,7 @@ class IfElseAST : public NodeAST
 public:
     NodeAST* m_cond;
     NodeAST* m_thenStmt;
-    NodeAST* m_elseStmt;
+    NodeAST* m_elseStmt = NULL;
     IfElseAST(NodeAST* cond, NodeAST* thenStmt, NodeAST* elseStmt)
         : m_cond(cond)
         , m_thenStmt(thenStmt)
@@ -1060,7 +1060,7 @@ public:
         printIndent(indent+2);
         printf("m_thenStmt:\n");
         m_thenStmt->print(indent+2);
-        if(m_elseStmt != 0)
+        if(m_elseStmt)
         {
             printIndent(indent+2);
             printf("m_elseStmt:\n");
@@ -1096,8 +1096,8 @@ public:
 class CaseAST : public NodeAST
 {
 public:
-    NodeAST* m_expr;//if expr is NULL, this is 'default:' statement.
-    BlockAST* m_stmts;
+    NodeAST* m_expr; //if expr is NULL, this is 'default:' statement.
+    BlockAST* m_stmts = NULL;
 
     CaseAST(NodeAST* expr, BlockAST* stmts)
         : m_expr(expr)
@@ -1109,14 +1109,14 @@ public:
     {
         printIndent(indent);
         printf("[CaseAST]: %s\n", m_expr==0? "default" : "case");
-        if(m_expr != 0)
+        if(m_expr)
         {
             printIndent(indent+2);
             printf("m_expr:\n");
             m_expr->print(indent+2);
         }
         printIndent(indent+2);
-        if(m_stmts==0)
+        if(m_stmts == NULL)
         {
             printf("m_stmts: null\n");
         }
@@ -1207,9 +1207,9 @@ public:
 class ForAST : public NodeAST
 {
 public:
-    NodeAST* m_init;
-    NodeAST* m_cond;
-    NodeAST* m_inc;
+    NodeAST* m_init = NULL;
+    NodeAST* m_cond = NULL;
+    NodeAST* m_inc = NULL;
     NodeAST* m_stmt;
     ForAST(NodeAST* init, NodeAST* cond, NodeAST* inc, NodeAST* stmt)
         : m_init(init)
@@ -1224,7 +1224,7 @@ public:
         printIndent(indent);
         printf("[ForAST]:\n");
         printIndent(indent+2);
-        if(m_init != 0)
+        if(m_init)
         {
             printf("m_init:\n");
             m_init->print(indent+2);
@@ -1234,7 +1234,7 @@ public:
             printf("m_init: NULL\n");
         }
         printIndent(indent+2);
-        if(m_cond != 0)
+        if(m_cond)
         {
             printf("m_cond:\n");
             m_cond->print(indent+2);
@@ -1244,7 +1244,7 @@ public:
             printf("m_cond: NULL\n");
         }
         printIndent(indent+2);
-        if(m_inc != 0)
+        if(m_inc)
         {
             printf("m_inc:\n");
             m_inc->print(indent+2);

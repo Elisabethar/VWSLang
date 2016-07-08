@@ -1,5 +1,9 @@
 SET(CMAKE_C_COMPILER "c++")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+execute_process(COMMAND llvm-config --cxxflags OUTPUT_VARIABLE LLVM_CXX_FLAGS)
+string(REGEX REPLACE "\n" " " LLVM_CXX_FLAGS "${LLVM_CXX_FLAGS}")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LLVM_CXX_FLAGS} -g -w")
 
 find_package(BISON)
 find_package(FLEX)
@@ -13,8 +17,14 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-add_executable(VWSL
-    vwsl_main.cpp
+set(SRC_LIST
+    vwsl_ast.cpp
+    vwsl_codegen.cpp
+    vwsl_vm.cpp
     ${BISON_MyParser_OUTPUTS}
     ${FLEX_MyScanner_OUTPUTS}
+    )
+
+add_library(VWSLLIB
+    ${SRC_LIST}
     )

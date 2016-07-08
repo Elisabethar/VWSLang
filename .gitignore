@@ -9,6 +9,7 @@
 /tmp
 
 # Ignore other unneeded files.
+.vscode/
 build/
 doc/
 *.swp
